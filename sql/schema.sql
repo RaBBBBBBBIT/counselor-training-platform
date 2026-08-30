@@ -410,3 +410,7 @@ UNION SELECT menu_id FROM sys_menu WHERE parent_id IN (SELECT menu_id FROM sys_m
 DELETE FROM sys_role_menu WHERE menu_id IN (SELECT menu_id FROM delids);
 DELETE FROM sys_menu WHERE menu_id IN (SELECT menu_id FROM delids);
 DROP TEMPORARY TABLE delids;
+
+-- 补充：删除"系统监控"目录(菜单2)
+DELETE FROM sys_role_menu WHERE menu_id=2;
+DELETE FROM sys_menu WHERE menu_id=2;
