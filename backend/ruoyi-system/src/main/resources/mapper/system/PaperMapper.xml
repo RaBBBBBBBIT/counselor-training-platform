@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PaperMapper">
+
+    <resultMap id="PaperResult" type="com.ruoyi.system.domain.Paper">
+        <id     property="paperId"      column="paper_id"/>
+        <result property="paperName"    column="paper_name"/>
+        <result property="generateMode" column="generate_mode"/>
+        <result property="bankId"       column="bank_id"/>
+        <result property="totalScore"   column="total_score"/>
+        <result property="bankName"     column="bank_name"/>
+        <result property="createBy"     column="create_by"/>
+        <result property="createTime"   column="create_time"/>
+        <result property="remark"       column="remark"/>
+    </resultMap>
+
+    <resultMap id="PaperQuestionResult" type="com.ruoyi.system.domain.PaperQuestion">
+        <id     property="paperQuestionId" column="paper_question_id"/>
+        <result property="paperId"  column="paper_id"/>
+        <result property="questionId" column="question_id"/>
+        <result property="orderNo"  column="order_no"/>
+        <result property="score"    column="score"/>
+        <result property="snapshot" column="snapshot"/>
+    </resultMap>
+
+    <sql id="selectPaperVo">
+        select p.paper_id, p.paper_name, p.generate_mode, p.bank_id, p.total_score, b.bank_name,
+               p.create_by, p.create_time, p.remark
+        from paper p
+        left join question_bank b on p.bank_id = b.bank_id
+    </sql>
+
+    <select id="selectPaperList" parameterType="com.ruoyi.system.domain.Paper" resultMap="PaperResult">
+        <include refid="selectPaperVo"/>
+        <where>
+            <if test="paperName != null and paperName != ''"> and p.paper_name like concat('%', #{paperName}, '%')</if>
+            <if test="generateMode != null and generateMode != ''"> and p.generate_mode = #{generateMode}</if>
+        </where>
+        order by p.paper_id desc
+    </select>
+
+    <select id="selectPaperById" parameterType="Long" resultMap="PaperResult">
+        <include refid="selectPaperVo"/>
+        where p.paper_id = #{paperId}
+    </select>
+
+    <insert id="insertPaper" parameterType="com.ruoyi.system.domain.Paper" useGeneratedKeys="true" keyProperty="paperId">
+        insert into paper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="paperName != null and paperName != ''">paper_name,</if>
+            <if test="generateMode != null and generateMode != ''">generate_mode,</if>
+            <if test="bankId != null">bank_id,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="paperName != null and paperName != ''">#{paperName},</if>
+            <if test="generateMode != null and generateMode != ''">#{generateMode},</if>
+            <if test="bankId != null">#{bankId},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePaper" parameterType="com.ruoyi.system.domain.Paper">
+        update paper
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="paperName != null and paperName != ''">paper_name = #{paperName},</if>
+            <if test="generateMode != null and generateMode != ''">generate_mode = #{generateMode},</if>
+            <if test="bankId != null">bank_id = #{bankId},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where paper_id = #{paperId}
+    </update>
+
+    <delete id="deletePaperById" parameterType="Long">
+        delete from paper where paper_id = #{paperId}
+    </delete>
+
+    <select id="selectPaperQuestionByPaperId" parameterType="Long" resultMap="PaperQuestionResult">
+        select paper_question_id, paper_id, question_id, order_no, score, snapshot
+        from paper_question where paper_id = #{paperId} order by order_no
+    </select>
+
+    <insert id="insertPaperQuestion" parameterType="com.ruoyi.system.domain.PaperQuestion" useGeneratedKeys="true" keyProperty="paperQuestionId">
+        insert into paper_question (paper_id, question_id, order_no, score, snapshot)
+        values (#{paperId}, #{questionId}, #{orderNo}, #{score}, #{snapshot})
+    </insert>
+
+    <delete id="deletePaperQuestionByPaperId" parameterType="Long">
+        delete from paper_question where paper_id = #{paperId}
+    </delete>
+</mapper>

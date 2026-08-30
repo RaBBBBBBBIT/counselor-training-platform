@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.QuestionBankMapper">
+
+    <resultMap id="QuestionBankResult" type="com.ruoyi.system.domain.QuestionBank">
+        <id     property="bankId"     column="bank_id"/>
+        <result property="bankName"   column="bank_name"/>
+        <result property="ownerId"    column="owner_id"/>
+        <result property="shared"     column="shared"/>
+        <result property="ownerName"  column="owner_name"/>
+        <result property="createBy"   column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy"   column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark"     column="remark"/>
+    </resultMap>
+
+    <sql id="selectBankVo">
+        select b.bank_id, b.bank_name, b.owner_id, b.shared, u.nick_name as owner_name,
+               b.create_by, b.create_time, b.update_by, b.update_time, b.remark
+        from question_bank b
+        left join sys_user u on b.owner_id = u.user_id
+    </sql>
+
+    <select id="selectQuestionBankList" parameterType="com.ruoyi.system.domain.QuestionBank" resultMap="QuestionBankResult">
+        <include refid="selectBankVo"/>
+        <where>
+            <if test="bankName != null and bankName != ''"> and b.bank_name like concat('%', #{bankName}, '%')</if>
+            <if test="shared != null and shared != ''"> and b.shared = #{shared}</if>
+        </where>
+        order by b.bank_id desc
+    </select>
+
+    <select id="selectQuestionBankById" parameterType="Long" resultMap="QuestionBankResult">
+        <include refid="selectBankVo"/>
+        where b.bank_id = #{bankId}
+    </select>
+
+    <insert id="insertQuestionBank" parameterType="com.ruoyi.system.domain.QuestionBank" useGeneratedKeys="true" keyProperty="bankId">
+        insert into question_bank
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bankName != null and bankName != ''">bank_name,</if>
+            <if test="ownerId != null">owner_id,</if>
+            <if test="shared != null">shared,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bankName != null and bankName != ''">#{bankName},</if>
+            <if test="ownerId != null">#{ownerId},</if>
+            <if test="shared != null">#{shared},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateQuestionBank" parameterType="com.ruoyi.system.domain.QuestionBank">
+        update question_bank
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bankName != null and bankName != ''">bank_name = #{bankName},</if>
+            <if test="shared != null">shared = #{shared},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where bank_id = #{bankId}
+    </update>
+
+    <delete id="deleteQuestionBankById" parameterType="Long">
+        delete from question_bank where bank_id = #{bankId}
+    </delete>
+
+    <delete id="deleteQuestionBankByIds" parameterType="Long">
+        delete from question_bank where bank_id in
+        <foreach collection="array" item="bankId" open="(" separator="," close=")">
+            #{bankId}
+        </foreach>
+    </delete>
+
+    <select id="countQuestionByBankId" parameterType="Long" resultType="int">
+        select count(1) from question where bank_id = #{bankId}
+    </select>
+</mapper>
