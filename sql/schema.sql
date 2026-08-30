@@ -351,3 +351,7 @@ INSERT INTO practice_participant (practice_participant_id, batch_id, user_id) VA
 INSERT INTO student (student_id, student_name, photo_url, dept_id, info, create_by, create_time) VALUES
   (1, '张同学', '/static/student/1.jpg', 200, '学业预警，需关注。', 'admin', NOW()),
   (2, '刘同学', '/static/student/2.jpg', 200, '心理波动，需谈心。', 'admin', NOW());
+
+-- 隐藏若依官方菜单(若依官网)以去除品牌痕迹
+USE counselor_training;
+UPDATE sys_menu SET visible='1' WHERE menu_id=4;
