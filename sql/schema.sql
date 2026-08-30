@@ -398,3 +398,6 @@ DELETE FROM sys_role_dept WHERE dept_id NOT IN (SELECT dept_id FROM sys_dept);
 --   缓存监控/缓存列表/表单构建/代码生成/系统接口 + 系统工具目录
 -- ============================================================
 UPDATE sys_menu SET visible='1' WHERE menu_id IN (3,104,110,111,112,113,114,115,116,117);
+
+-- 隐藏若依半可选功能：参数设置/通知公告/日志管理/在线用户/系统监控
+UPDATE sys_menu SET visible='1' WHERE menu_id IN (2,106,107,108,109,500,501);
