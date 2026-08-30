@@ -401,3 +401,12 @@ UPDATE sys_menu SET visible='1' WHERE menu_id IN (3,104,110,111,112,113,114,115,
 
 -- 隐藏若依半可选功能：参数设置/通知公告/日志管理/在线用户/系统监控
 UPDATE sys_menu SET visible='1' WHERE menu_id IN (2,106,107,108,109,500,501);
+
+-- 删除与辅导员平台无关的若依功能菜单（岗位/参数/通知/日志/系统监控/系统工具/若依官网 及其子菜单按钮）
+CREATE TEMPORARY TABLE delids AS
+SELECT menu_id FROM sys_menu WHERE menu_id IN (3,4,104,106,107,108,109,110,111,112,113,114,115,116,117,500,501)
+UNION SELECT menu_id FROM sys_menu WHERE parent_id IN (3,4,104,106,107,108,109,110,111,112,113,114,115,116,117,500,501)
+UNION SELECT menu_id FROM sys_menu WHERE parent_id IN (SELECT menu_id FROM sys_menu WHERE parent_id IN (3,4,104,106,107,108,109,110,111,112,113,114,115,116,117,500,501));
+DELETE FROM sys_role_menu WHERE menu_id IN (SELECT menu_id FROM delids);
+DELETE FROM sys_menu WHERE menu_id IN (SELECT menu_id FROM delids);
+DROP TEMPORARY TABLE delids;
