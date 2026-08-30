@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AnswerRecordMapper">
+    <resultMap id="AnswerRecordResult" type="com.ruoyi.system.domain.AnswerRecord">
+        <id property="recordId" column="record_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="paperId" column="paper_id"/>
+        <result property="questionId" column="question_id"/>
+        <result property="competitionId" column="competition_id"/>
+        <result property="stageId" column="stage_id"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="userAnswer" column="user_answer"/>
+        <result property="objectiveScore" column="objective_score"/>
+        <result property="subjectiveScore" column="subjective_score"/>
+        <result property="isCorrect" column="is_correct"/>
+        <result property="scoreStatus" column="score_status"/>
+        <result property="answeredAt" column="answered_at"/>
+        <result property="scoredAt" column="scored_at"/>
+    </resultMap>
+    <insert id="insertAnswerRecord" parameterType="com.ruoyi.system.domain.AnswerRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into answer_record (user_id, paper_id, question_id, competition_id, stage_id, batch_id, user_answer, objective_score, subjective_score, is_correct, score_status, answered_at, scored_at)
+        values (#{userId}, #{paperId}, #{questionId}, #{competitionId}, #{stageId}, #{batchId}, #{userAnswer}, #{objectiveScore}, #{subjectiveScore}, #{isCorrect}, #{scoreStatus}, #{answeredAt}, #{scoredAt})
+    </insert>
+    <update id="updateSubjectiveScore">
+        update answer_record set subjective_score = #{subjectiveScore}, score_status = 'SCORED', scored_by = #{scoredBy}, scored_at = now()
+        where user_id = #{userId} and question_id = #{questionId}
+    </update>
+    <select id="selectByUserAndPaper" resultMap="AnswerRecordResult">
+        select * from answer_record where user_id = #{userId} and paper_id = #{paperId}
+    </select>
+    <select id="selectByUserAndStage" resultMap="AnswerRecordResult">
+        select * from answer_record where user_id = #{userId} and competition_id = #{competitionId} and stage_id = #{stageId}
+    </select>
+    <select id="selectPracticeBatchByUser" parameterType="Long" resultType="com.ruoyi.system.domain.PracticeBatch">
+        select pb.batch_id, pb.batch_name, pb.mode, pb.paper_id, pb.start_time, pb.end_time, p.paper_name
+        from practice_participant pp join practice_batch pb on pp.batch_id = pb.batch_id
+        left join paper p on pb.paper_id = p.paper_id
+        where pp.user_id = #{userId}
+    </select>
+    <select id="selectCompetitionByUser" parameterType="Long" resultType="com.ruoyi.system.domain.Competition">
+        select c.competition_id, c.competition_name, c.content, c.status
+        from competition_participant cp join competition c on cp.competition_id = c.competition_id
+        where cp.user_id = #{userId}
+    </select>
+</mapper>

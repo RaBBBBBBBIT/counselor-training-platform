@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ScoreMapper">
+    <select id="selectScoreList" parameterType="com.ruoyi.system.domain.ScoreVO" resultType="com.ruoyi.system.domain.ScoreVO">
+        select u.user_id, u.nick_name as user_name, u.dept_id, d.dept_name,
+               coalesce(sum(a.objective_score), 0) as objective_score,
+               coalesce(sum(a.subjective_score), 0) as subjective_score,
+               coalesce(sum(a.objective_score), 0) + coalesce(sum(a.subjective_score), 0) as total_score,
+               max(a.score_status) as score_status
+        from answer_record a
+        join sys_user u on a.user_id = u.user_id
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="competitionId != null"> and a.competition_id = #{competitionId} </if>
+            <if test="batchId != null"> and a.batch_id = #{batchId} </if>
+        </where>
+        group by u.user_id, u.nick_name, u.dept_id, d.dept_name
+        order by total_score desc, u.nick_name
+    </select>
+</mapper>

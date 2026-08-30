@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PracticeParticipantMapper">
+    <resultMap id="PPResult" type="com.ruoyi.system.domain.PracticeParticipant">
+        <id property="practiceParticipantId" column="practice_participant_id"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+    </resultMap>
+    <select id="selectByBatchId" parameterType="Long" resultMap="PPResult">
+        select pp.practice_participant_id, pp.batch_id, pp.user_id, u.nick_name as user_name
+        from practice_participant pp left join sys_user u on pp.user_id = u.user_id
+        where pp.batch_id = #{batchId}
+    </select>
+    <insert id="insertParticipant" parameterType="com.ruoyi.system.domain.PracticeParticipant" useGeneratedKeys="true" keyProperty="practiceParticipantId">
+        insert into practice_participant (batch_id, user_id) values (#{batchId}, #{userId})
+    </insert>
+    <delete id="deleteParticipant"> delete from practice_participant where batch_id = #{batchId} and user_id = #{userId} </delete>
+    <delete id="deleteParticipantByBatchId" parameterType="Long"> delete from practice_participant where batch_id = #{batchId} </delete>
+</mapper>

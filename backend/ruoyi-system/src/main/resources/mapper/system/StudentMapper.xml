@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentMapper">
+    <resultMap id="StudentResult" type="com.ruoyi.system.domain.Student">
+        <id property="studentId" column="student_id"/>
+        <result property="studentName" column="student_name"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="info" column="info"/>
+    </resultMap>
+    <select id="selectStudentList" parameterType="com.ruoyi.system.domain.Student" resultMap="StudentResult">
+        select student_id, student_name, photo_url, dept_id, info from student
+        <where>
+            <if test="studentName != null and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+        </where>
+        order by student_id desc
+    </select>
+    <select id="selectStudentById" parameterType="Long" resultMap="StudentResult">
+        select student_id, student_name, photo_url, dept_id, info from student where student_id = #{studentId}
+    </select>
+    <select id="selectRandomStudent" resultMap="StudentResult">
+        select student_id, student_name, photo_url, dept_id, info from student order by rand() limit 1
+    </select>
+    <insert id="insertStudent" parameterType="com.ruoyi.system.domain.Student" useGeneratedKeys="true" keyProperty="studentId">
+        insert into student (student_name, photo_url, dept_id, info) values (#{studentName}, #{photoUrl}, #{deptId}, #{info})
+    </insert>
+    <delete id="deleteStudentById" parameterType="Long"> delete from student where student_id = #{studentId} </delete>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PracticeBatchMapper">
+    <resultMap id="PracticeBatchResult" type="com.ruoyi.system.domain.PracticeBatch">
+        <id property="batchId" column="batch_id"/>
+        <result property="batchName" column="batch_name"/>
+        <result property="mode" column="mode"/>
+        <result property="paperId" column="paper_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="paperName" column="paper_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <sql id="selectBatchVo">
+        select pb.batch_id, pb.batch_name, pb.mode, pb.paper_id, pb.start_time, pb.end_time, p.paper_name, pb.create_by, pb.create_time, pb.remark
+        from practice_batch pb left join paper p on pb.paper_id = p.paper_id
+    </sql>
+    <select id="selectPracticeBatchList" parameterType="com.ruoyi.system.domain.PracticeBatch" resultMap="PracticeBatchResult">
+        <include refid="selectBatchVo"/>
+        <where>
+            <if test="batchName != null and batchName != ''"> and pb.batch_name like concat('%', #{batchName}, '%')</if>
+            <if test="mode != null and mode != ''"> and pb.mode = #{mode}</if>
+        </where>
+        order by pb.batch_id desc
+    </select>
+    <select id="selectPracticeBatchById" parameterType="Long" resultMap="PracticeBatchResult">
+        <include refid="selectBatchVo"/> where pb.batch_id = #{batchId}
+    </select>
+    <insert id="insertPracticeBatch" parameterType="com.ruoyi.system.domain.PracticeBatch" useGeneratedKeys="true" keyProperty="batchId">
+        insert into practice_batch (batch_name, mode, paper_id, start_time, end_time, create_by)
+        values (#{batchName}, #{mode}, #{paperId}, #{startTime}, #{endTime}, #{createBy})
+    </insert>
+    <update id="updatePracticeBatch" parameterType="com.ruoyi.system.domain.PracticeBatch">
+        update practice_batch
+        <set>
+            <if test="batchName != null">batch_name = #{batchName},</if>
+            <if test="mode != null">mode = #{mode},</if>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </set>
+        where batch_id = #{batchId}
+    </update>
+    <delete id="deletePracticeBatchById" parameterType="Long"> delete from practice_batch where batch_id = #{batchId} </delete>
+</mapper>

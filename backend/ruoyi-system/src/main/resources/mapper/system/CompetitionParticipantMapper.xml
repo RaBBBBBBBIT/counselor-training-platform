@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CompetitionParticipantMapper">
+    <resultMap id="ParticipantResult" type="com.ruoyi.system.domain.CompetitionParticipant">
+        <id property="participantId" column="participant_id"/>
+        <result property="competitionId" column="competition_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+    </resultMap>
+    <select id="selectParticipantListByCompetitionId" parameterType="Long" resultMap="ParticipantResult">
+        select cp.participant_id, cp.competition_id, cp.user_id, u.nick_name as user_name
+        from competition_participant cp left join sys_user u on cp.user_id = u.user_id
+        where cp.competition_id = #{competitionId}
+    </select>
+    <insert id="insertParticipant" parameterType="com.ruoyi.system.domain.CompetitionParticipant" useGeneratedKeys="true" keyProperty="participantId">
+        insert into competition_participant (competition_id, user_id) values (#{competitionId}, #{userId})
+    </insert>
+    <delete id="deleteParticipant">
+        delete from competition_participant where competition_id = #{competitionId} and user_id = #{userId}
+    </delete>
+    <delete id="deleteParticipantByCompetitionId" parameterType="Long">
+        delete from competition_participant where competition_id = #{competitionId}
+    </delete>
+</mapper>

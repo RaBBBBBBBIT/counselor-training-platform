@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CompetitionMapper">
+    <resultMap id="CompetitionResult" type="com.ruoyi.system.domain.Competition">
+        <id property="competitionId" column="competition_id"/>
+        <result property="competitionName" column="competition_name"/>
+        <result property="content" column="content"/>
+        <result property="organizerId" column="organizer_id"/>
+        <result property="status" column="status"/>
+        <result property="organizerName" column="organizer_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <sql id="selectCompVo">
+        select c.competition_id, c.competition_name, c.content, c.organizer_id, c.status, u.nick_name as organizer_name, c.create_by, c.create_time, c.remark
+        from competition c left join sys_user u on c.organizer_id = u.user_id
+    </sql>
+    <select id="selectCompetitionList" parameterType="com.ruoyi.system.domain.Competition" resultMap="CompetitionResult">
+        <include refid="selectCompVo"/>
+        <where>
+            <if test="competitionName != null and competitionName != ''"> and c.competition_name like concat('%', #{competitionName}, '%')</if>
+            <if test="status != null and status != ''"> and c.status = #{status}</if>
+        </where>
+        order by c.competition_id desc
+    </select>
+    <select id="selectCompetitionById" parameterType="Long" resultMap="CompetitionResult">
+        <include refid="selectCompVo"/> where c.competition_id = #{competitionId}
+    </select>
+    <insert id="insertCompetition" parameterType="com.ruoyi.system.domain.Competition" useGeneratedKeys="true" keyProperty="competitionId">
+        insert into competition (competition_name, content, organizer_id, status, create_by, remark)
+        values (#{competitionName}, #{content}, #{organizerId}, #{status}, #{createBy}, #{remark})
+    </insert>
+    <update id="updateCompetition" parameterType="com.ruoyi.system.domain.Competition">
+        update competition
+        <set>
+            <if test="competitionName != null">competition_name = #{competitionName},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </set>
+        where competition_id = #{competitionId}
+    </update>
+    <delete id="deleteCompetitionById" parameterType="Long">
+        delete from competition where competition_id = #{competitionId}
+    </delete>
+    <update id="updateCompetitionStatus">
+        update competition set status = #{status} where competition_id = #{competitionId}
+    </update>
+</mapper>

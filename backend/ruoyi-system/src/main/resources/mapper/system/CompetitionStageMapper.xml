@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CompetitionStageMapper">
+    <resultMap id="StageResult" type="com.ruoyi.system.domain.CompetitionStage">
+        <id property="stageId" column="stage_id"/>
+        <result property="competitionId" column="competition_id"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="stageType" column="stage_type"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="paperId" column="paper_id"/>
+        <result property="paperName" column="paper_name"/>
+    </resultMap>
+    <select id="selectStageListByCompetitionId" parameterType="Long" resultMap="StageResult">
+        select s.stage_id, s.competition_id, s.stage_name, s.stage_type, s.order_no, s.paper_id, p.paper_name
+        from competition_stage s left join paper p on s.paper_id = p.paper_id
+        where s.competition_id = #{competitionId} order by s.order_no
+    </select>
+    <select id="selectStageById" parameterType="Long" resultMap="StageResult">
+        select s.stage_id, s.competition_id, s.stage_name, s.stage_type, s.order_no, s.paper_id, p.paper_name
+        from competition_stage s left join paper p on s.paper_id = p.paper_id
+        where s.stage_id = #{stageId}
+    </select>
+    <insert id="insertStage" parameterType="com.ruoyi.system.domain.CompetitionStage" useGeneratedKeys="true" keyProperty="stageId">
+        insert into competition_stage (competition_id, stage_name, stage_type, order_no, paper_id)
+        values (#{competitionId}, #{stageName}, #{stageType}, #{orderNo}, #{paperId})
+    </insert>
+    <update id="updateStage" parameterType="com.ruoyi.system.domain.CompetitionStage">
+        update competition_stage
+        <set>
+            <if test="stageName != null">stage_name = #{stageName},</if>
+            <if test="stageType != null">stage_type = #{stageType},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+        </set>
+        where stage_id = #{stageId}
+    </update>
+    <delete id="deleteStageById" parameterType="Long"> delete from competition_stage where stage_id = #{stageId} </delete>
+    <delete id="deleteStageByCompetitionId" parameterType="Long"> delete from competition_stage where competition_id = #{competitionId} </delete>
+</mapper>
