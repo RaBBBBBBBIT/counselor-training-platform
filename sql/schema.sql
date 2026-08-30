@@ -380,3 +380,15 @@ UPDATE sys_post SET post_name='辅导员' WHERE post_id=4;
 UPDATE sys_notice SET notice_title='欢迎使用辅导员训练平台', notice_content='以赛促学、以练促能，助力辅导员专业成长。' WHERE notice_id=1;
 UPDATE sys_notice SET notice_title='系统维护通知：每周一凌晨例行维护' WHERE notice_id=2;
 UPDATE sys_notice SET notice_title='辅导员训练平台介绍' WHERE notice_id=3;
+
+-- ============================================================
+-- 部门/院系：清理若依演示组织树，只保留真实院系
+--   学校(100) → 计算机学院(200) / 经济管理学院(201)
+-- ============================================================
+UPDATE sys_dept SET dept_name='学校', parent_id=0, ancestors='0' WHERE dept_id=100;
+UPDATE sys_dept SET parent_id=100, ancestors='0,100', order_num=1 WHERE dept_id=200;
+UPDATE sys_dept SET parent_id=100, ancestors='0,100', order_num=2 WHERE dept_id=201;
+UPDATE sys_user SET dept_id=100 WHERE user_id=1 AND user_name='admin';
+UPDATE sys_user SET dept_id=100 WHERE user_id=2 AND user_name='ry';
+DELETE FROM sys_dept WHERE dept_id IN (101,102,103,104,105,106,107,108,109);
+DELETE FROM sys_role_dept WHERE dept_id NOT IN (SELECT dept_id FROM sys_dept);
