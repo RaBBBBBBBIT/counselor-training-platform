@@ -392,3 +392,9 @@ UPDATE sys_user SET dept_id=100 WHERE user_id=1 AND user_name='admin';
 UPDATE sys_user SET dept_id=100 WHERE user_id=2 AND user_name='ry';
 DELETE FROM sys_dept WHERE dept_id IN (101,102,103,104,105,106,107,108,109);
 DELETE FROM sys_role_dept WHERE dept_id NOT IN (SELECT dept_id FROM sys_dept);
+
+-- ============================================================
+-- 隐藏用不上的若依功能：岗位/定时任务/数据监控/服务监控/
+--   缓存监控/缓存列表/表单构建/代码生成/系统接口 + 系统工具目录
+-- ============================================================
+UPDATE sys_menu SET visible='1' WHERE menu_id IN (3,104,110,111,112,113,114,115,116,117);
