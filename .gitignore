@@ -1,0 +1,14 @@
+# 构建产物 / 依赖
+node_modules/
+dist/
+target/
+*.jar
+# IDE
+.idea/
+.vscode/
+*.iml
+*.class
+# 日志 / 临时
+*.log
+*.tmp
+.DS_Store
