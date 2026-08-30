@@ -355,3 +355,28 @@ INSERT INTO student (student_id, student_name, photo_url, dept_id, info, create_
 -- 隐藏若依官方菜单(若依官网)以去除品牌痕迹
 USE counselor_training;
 UPDATE sys_menu SET visible='1' WHERE menu_id=4;
+
+-- ============================================================
+-- 去若依品牌：管理员昵称/演示账号/部门树/岗位/公告 中性化
+-- （在若依基础表导入后执行，覆盖 RuoYi 演示数据）
+-- ============================================================
+USE counselor_training;
+UPDATE sys_user SET nick_name='系统管理员' WHERE user_id=1;
+UPDATE sys_user SET nick_name='管理员', status='1' WHERE user_id=2;
+UPDATE sys_dept SET dept_name='学校总部' WHERE dept_id=100;
+UPDATE sys_dept SET dept_name='教学单位' WHERE dept_id=101;
+UPDATE sys_dept SET dept_name='学生工作单位' WHERE dept_id=102;
+UPDATE sys_dept SET dept_name='院系一' WHERE dept_id=103;
+UPDATE sys_dept SET dept_name='院系二' WHERE dept_id=104;
+UPDATE sys_dept SET dept_name='院系三' WHERE dept_id=105;
+UPDATE sys_dept SET dept_name='院系四' WHERE dept_id=106;
+UPDATE sys_dept SET dept_name='院系五' WHERE dept_id=107;
+UPDATE sys_dept SET dept_name='院系六' WHERE dept_id=108;
+UPDATE sys_dept SET dept_name='院系七' WHERE dept_id=109;
+UPDATE sys_post SET post_name='党委书记' WHERE post_id=1;
+UPDATE sys_post SET post_name='院长' WHERE post_id=2;
+UPDATE sys_post SET post_name='教研室主任' WHERE post_id=3;
+UPDATE sys_post SET post_name='辅导员' WHERE post_id=4;
+UPDATE sys_notice SET notice_title='欢迎使用辅导员训练平台', notice_content='以赛促学、以练促能，助力辅导员专业成长。' WHERE notice_id=1;
+UPDATE sys_notice SET notice_title='系统维护通知：每周一凌晨例行维护' WHERE notice_id=2;
+UPDATE sys_notice SET notice_title='辅导员训练平台介绍' WHERE notice_id=3;
